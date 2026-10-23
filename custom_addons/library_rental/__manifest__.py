@@ -4,8 +4,14 @@
     'category': 'Services',
     'summary': 'Library Rental Management Module',
     'author': 'Oleksandra Zhukivets',
-    'depends': ['base'],
-    'data': [],
+    'depends': ['base', 'web'],
+    'data': [
+    'security/ir.access.csv',
+    'views/library_views.xml',
+    ],
+    'demo': [
+        'demo/library_demo.xml',
+    ],
     'installable': True,
     'application': True,
     'license': 'LGPL-3',

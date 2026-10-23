@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Books -->
+    <record id="book_1" model="library.book">
+        <field name="name">The Witcher: The Last Wish</field>
+        <field name="author">Andrzej Sapkowski</field>
+        <field name="isbn">978-0316029186</field>
+        <field name="publish_year">1993</field>
+    </record>
+
+    <record id="book_2" model="library.book">
+        <field name="name">1984</field>
+        <field name="author">George Orwell</field>
+        <field name="isbn">978-0451524935</field>
+        <field name="publish_year">1949</field>
+    </record>
+
+    <record id="book_3" model="library.book">
+        <field name="name">Dune</field>
+        <field name="author">Frank Herbert</field>
+        <field name="isbn">978-0441172719</field>
+        <field name="publish_year">1965</field>
+    </record>
+
+    <!-- Copies -->
+    <record id="copy_1_1" model="library.copy">
+        <field name="book_id" ref="book_1"/>
+        <field name="inventory_number">INV-0001</field>
+        <field name="condition">new</field>
+    </record>
+
+    <record id="copy_1_2" model="library.copy">
+        <field name="book_id" ref="book_1"/>
+        <field name="inventory_number">INV-0002</field>
+        <field name="condition">good</field>
+    </record>
+
+    <record id="copy_2_1" model="library.copy">
+        <field name="book_id" ref="book_2"/>
+        <field name="inventory_number">INV-0003</field>
+        <field name="condition">good</field>
+    </record>
+
+    <record id="copy_3_1" model="library.copy">
+        <field name="book_id" ref="book_3"/>
+        <field name="inventory_number">INV-0004</field>
+        <field name="condition">damaged</field>
+    </record>
+
+    <!-- Members -->
+    <record id="member_1" model="library.member">
+        <field name="name">Oleksandra Zhukivets</field>
+        <field name="email">sasha@example.com</field>
+        <field name="membership_number">LIB-M-001</field>
+    </record>
+
+    <record id="member_2" model="library.member">
+        <field name="name">John Doe</field>
+        <field name="email">john@example.com</field>
+        <field name="membership_number">LIB-M-002</field>
+    </record>
+
+    <!-- Loans -->
+    <record id="loan_1" model="library.loan">
+        <field name="copy_id" ref="copy_1_1"/>
+        <field name="member_id" ref="member_1"/>
+        <field name="loan_date">2026-10-01</field>
+        <field name="due_date">2026-10-15</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="loan_2" model="library.loan">
+        <field name="copy_id" ref="copy_2_1"/>
+        <field name="member_id" ref="member_2"/>
+        <field name="loan_date">2026-09-01</field>
+        <field name="due_date">2026-09-15</field>
+        <field name="return_date">2026-09-14</field>
+        <field name="state">returned</field>
+    </record>
+</odoo>
