@@ -106,20 +106,24 @@
         <field name="model">library.loan</field>
         <field name="arch" type="xml">
             <form string="Loan">
-                <header>
-                    <field name="state" widget="statusbar"/>
-                </header>
+                   <header>
+                        <button name="action_return" string="Return" type="object"
+                            class="btn-primary" invisible="state == 'returned'"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
                 <sheet>
                     <group>
                         <group string="Main Info">
                             <field name="copy_id"/>
                             <field name="member_id"/>
                         </group>
-                        <group string="Dates">
-                            <field name="loan_date"/>
-                            <field name="due_date"/>
-                            <field name="return_date"/>
-                        </group>
+                            <group string="Dates">
+                             <field name="loan_date"/>
+                             <field name="due_date"/>
+                             <field name="return_date"/>
+                             <field name="is_overdue"/>
+                             <field name="fine_amount" invisible="fine_amount == 0"/>
+                             </group>
                     </group>
                 </sheet>
             </form>
