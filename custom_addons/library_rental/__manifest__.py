@@ -6,8 +6,9 @@
     'author': 'Oleksandra Zhukivets',
     'depends': ['base', 'web'],
     'data': [
-    'security/ir.access.csv',
-    'views/library_views.xml',
+        'security/library_security.xml',
+        'security/ir.access.csv',
+        'views/library_views.xml',
     ],
     'demo': [
         'demo/library_demo.xml',

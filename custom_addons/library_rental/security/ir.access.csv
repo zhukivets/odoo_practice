@@ -1,5 +1,8 @@
 id,name,model_id,group_id/id,operation,domain
-access_library_book_user,library.book.user,library.book,base.group_user,crud,
-access_library_copy_user,library.copy.user,library.copy,base.group_user,crud,
-access_library_member_user,library.member.user,library.member,base.group_user,crud,
-access_library_loan_user,library.loan.user,library.loan,base.group_user,crud,
+access_library_book_librarian,library.book.librarian,library.book,library_rental.group_library_librarian,crud,
+access_library_copy_librarian,library.copy.librarian,library.copy,library_rental.group_library_librarian,crud,
+access_library_member_librarian,library.member.librarian,library.member,library_rental.group_library_librarian,crud,
+access_library_loan_librarian,library.loan.librarian,library.loan,library_rental.group_library_librarian,crud,
+access_library_book_reader,library.book.reader,library.book,library_rental.group_library_reader,r,
+access_library_copy_reader,library.copy.reader,library.copy,library_rental.group_library_reader,r,
+access_library_loan_reader,library.loan.reader,library.loan,library_rental.group_library_reader,r,"[('member_id.user_id', '=', user.id)]"

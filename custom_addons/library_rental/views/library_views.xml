@@ -60,7 +60,7 @@
         <field name="model">library.member</field>
         <field name="arch" type="xml">
             <list string="Members">
-                <field name="membership_number"/>
+                <field name="user_id"/>
                 <field name="name"/>
                 <field name="email"/>
                 <field name="phone"/>
@@ -79,6 +79,7 @@
                         <field name="name"/>
                         <field name="email"/>
                         <field name="phone"/>
+                        <field name="user_id"/>
                     </group>
                 </sheet>
             </form>
@@ -156,9 +157,14 @@
     </record>
 
     <!-- Menu Structure -->
-    <menuitem id="menu_library_root" name="Library" sequence="10"/>
-    <menuitem id="menu_library_books" name="Books" parent="menu_library_root" action="action_library_book" sequence="1"/>
-    <menuitem id="menu_library_copies" name="Copies" parent="menu_library_root" action="action_library_copy" sequence="2"/>
-    <menuitem id="menu_library_members" name="Members" parent="menu_library_root" action="action_library_member" sequence="3"/>
-    <menuitem id="menu_library_loans" name="Loans" parent="menu_library_root" action="action_library_loan" sequence="4"/>
+    <menuitem id="menu_library_root" name="Library" sequence="10"
+              groups="library_rental.group_library_reader,library_rental.group_library_librarian"/>
+    <menuitem id="menu_library_books" name="Books" parent="menu_library_root" action="action_library_book" sequence="1"
+              groups="library_rental.group_library_reader,library_rental.group_library_librarian"/>
+    <menuitem id="menu_library_copies" name="Copies" parent="menu_library_root" action="action_library_copy" sequence="2"
+              groups="library_rental.group_library_reader,library_rental.group_library_librarian"/>
+    <menuitem id="menu_library_members" name="Members" parent="menu_library_root" action="action_library_member" sequence="3"
+              groups="library_rental.group_library_librarian"/>
+    <menuitem id="menu_library_loans" name="Loans" parent="menu_library_root" action="action_library_loan" sequence="4"
+              groups="library_rental.group_library_reader,library_rental.group_library_librarian"/>
 </odoo>

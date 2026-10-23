@@ -12,4 +12,5 @@ class LibraryMember(models.Model):
         ondelete='cascade'
     )
     membership_number = fields.Char(string='Membership Number', required=True, copy=False)
+    user_id = fields.Many2one('res.users', string='Odoo User', ondelete='set null')
     loan_ids = fields.One2many('library.loan', 'member_id', string='Loans')
