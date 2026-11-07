@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Модель звіту = library.member. Саме записи library.member
+         приходять у docs і ітеруються в t-foreach="docs" нижче. -->
+    <record id="action_report_member_loan_history" model="ir.actions.report">
+        <field name="name">Історія видач читача</field>
+        <field name="model">library.member</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">library_rental.report_member_loan_history</field>
+        <field name="print_report_name">'Loan history - %s' % object.name</field>
+        <field name="binding_model_id" ref="model_library_member"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_member_loan_history">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="member">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Історія видач читача</h2>
+                        <p>
+                            <strong>Читач:</strong> <span t-field="member.name"/><br/>
+                            <strong>Читацький квиток:</strong> <span t-field="member.membership_number"/>
+                        </p>
+
+                        <table class="table table-sm table-bordered mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Книга</th>
+                                    <th>Інв. номер</th>
+                                    <th>Дата видачі</th>
+                                    <th>Повернути до</th>
+                                    <th>Дата повернення</th>
+                                    <th>Статус</th>
+                                    <th class="text-end">Штраф, грн</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="member.loan_ids" t-as="loan">
+                                    <td><span t-field="loan.copy_id.book_id.name"/></td>
+                                    <td><span t-field="loan.copy_id.inventory_number"/></td>
+                                    <td><span t-field="loan.loan_date"/></td>
+                                    <td><span t-field="loan.due_date"/></td>
+                                    <td><span t-field="loan.return_date"/></td>
+                                    <td><span t-field="loan.state"/></td>
+                                    <td class="text-end"><span t-field="loan.fine_amount"/></td>
+                                </tr>
+                                <tr t-if="not member.loan_ids">
+                                    <td colspan="7" class="text-center">Видач немає</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <p class="text-end">
+                            <strong>Усього видач:</strong> <span t-out="len(member.loan_ids)"/><br/>
+                            <strong>Загальна сума штрафів:</strong>
+                            <span t-out="'%.2f' % sum(member.loan_ids.mapped('fine_amount'))"/> грн
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

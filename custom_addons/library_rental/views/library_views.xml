@@ -108,8 +108,10 @@
         <field name="arch" type="xml">
             <form string="Loan">
                    <header>
-                        <button name="action_return" string="Return" type="object"
-                            class="btn-primary" invisible="state == 'returned'"/>
+                        <button name="%(library_rental.action_library_return_wizard)d"
+                            string="Оформити повернення" type="action"
+                            class="btn-primary" invisible="state == 'returned'"
+                            context="{'default_loan_id': id}"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                 <sheet>
@@ -125,6 +127,9 @@
                              <field name="is_overdue"/>
                              <field name="fine_amount" invisible="fine_amount == 0"/>
                              </group>
+                    </group>
+                    <group string="Return" invisible="state != 'returned'">
+                        <field name="return_notes"/>
                     </group>
                 </sheet>
             </form>

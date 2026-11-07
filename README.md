@@ -103,3 +103,38 @@
 ### Тестування під Читачем
 Створено користувача `Reader` з роллю User і групою Читач, читача бібліотеки прив'язано до нього через `user_id`. Під цим користувачем: у меню немає `Members`, у `Loans` видно лише його видачу, кнопки «Новий» немає.
 Скриншот: `screenshots/reader_test.png`.
+
+## Лабораторна 5: wizard «Оформити повернення» та QWeb-звіт
+
+### Wizard `library.return.wizard`
+- `models.TransientModel`, поля: `loan_id` (Many2one на `library.loan`, обов'язкове), `condition_on_return` (Selection з тими самими значеннями, що й `library.copy.condition`: new/good/damaged), `notes` (Text).
+- `default_get`: бере `default_loan_id` з контексту, а якщо його немає, то `active_id`, але лише коли `active_model == 'library.loan'`. Також підставляє поточний стан примірника як значення за замовчуванням.
+- `action_confirm()`: `self.ensure_one()`, далі робота лише з `self.loan_id`. Після підтвердження:
+  - видача: `state = 'returned'`, `return_date = сьогодні`, примітки зберігаються в нове поле `return_notes`;
+  - примірник: `condition = condition_on_return`;
+  - `fine_amount` перераховується автоматично, бо це `compute`/`store` поле з `@api.depends('due_date', 'return_date', 'state')`. Ручний запис у нього не потрібен: його затер би наступний перерахунок.
+  - Повторне повернення вже повернутої видачі блокується `UserError`.
+
+### Views
+- `wizard/library_return_wizard_views.xml`: форма wizard з кнопками «Підтвердити» / «Скасувати» і дія-вікно `ir.actions.act_window` з `target="new"`.
+- На формі Loan кнопку **Return** замінено кнопкою **«Оформити повернення»** (`type="action"`, `context="{'default_loan_id': id}"`). Кнопка прихована для повернених видач.
+- Файл wizard підключено в `__manifest__.py` **перед** `views/library_views.xml`, бо кнопка на формі Loan посилається на `%(action_library_return_wizard)d`.
+- Права на wizard (`crud`) має лише група Бібліотекар (`ir.access.csv`).
+
+### QWeb-звіт «Історія видач читача»
+- `ir.actions.report` з `model = library.member`, `report_type = qweb-pdf`, кнопка друку прив'язана до форми/списку читачів (`binding_model_id`).
+- Шаблон: `web.html_container` → `t-foreach="docs" t-as="member"` → `web.external_layout`. Усередині вкладений цикл `member.loan_ids`: книга, інвентарний номер, дати, статус, штраф і підсумкова сума штрафів.
+
+### AI-рев'ю: що перевірено вручну
+1. **`ensure_one()` / multi-record.** AI-чернетка `action_confirm()` мала стиль `for rec in self`, як в `action_return`. Для wizard це неправильно: кнопка wizard завжди викликається на одному записі, тому стоїть `self.ensure_one()` і робота йде з `self.loan_id`, без циклу. Якщо метод викликати на кількох записах, буде помилка, а не мовчазна обробка лише першого.
+2. **`default_get`.** Перевірено, що `active_id` береться лише за `active_model == 'library.loan'`, тож wizard не підставить id запису з іншої моделі.
+3. **`fine_amount`.** AI пропонував записувати штраф прямо у `write()`. Прибрано, бо поле обчислюване: правильно змінити `state` і `return_date`, а штраф перерахує `_compute_fine_amount`.
+4. **Поля примірника.** AI-чернетка писала у неіснуюче поле `library.copy.state`. У моделі є лише `condition`, а «вільність» примірника визначається відсутністю активної видачі. Тому оновлюється тільки `condition`.
+5. **Відповідність моделі звіту.** `ir.actions.report.model = library.member`, тому `docs` — це записи `library.member`, і саме їх ітерує `t-foreach="docs" t-as="member"`. Видачі ітеруються вкладеним `member.loan_ids`, а не через `docs`. Модель дії й те, що реально ітерується, збігаються.
+6. **`report_name`** має префікс технічної назви модуля: `library_rental.report_member_loan_history`.
+7. **`report_file` у звіті.** AI-код містив поле `report_file` в `ir.actions.report`. У збірці Odoo 19.5 його немає, і модуль не оновлювався (`ValueError: Invalid field 'report_file'`). Поле видалено.
+8. **`t-esc` у QWeb.** AI-код виводив підсумки через `t-esc`, і в PDF вони були порожні. В Odoo 19 замінено на `t-out`.
+
+### Скриншоти
+- `return_wizard.png`: заповнений wizard «Оформити повернення» (додано до здачі окремо).
+- `member_loan_history.pdf`: згенерований PDF-звіт «Історія видач читача» (додано до здачі окремо).

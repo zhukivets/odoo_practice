@@ -25,6 +25,7 @@ class LibraryLoan(models.Model):
     loan_date = fields.Date(string='Loan Date', default=fields.Date.context_today, required=True)
     due_date = fields.Date(string='Due Date', compute='_compute_due_date', store=True)
     return_date = fields.Date(string='Return Date')
+    return_notes = fields.Text(string='Return Notes')
     state = fields.Selection([
         ('active', 'Active'),
         ('returned', 'Returned')

@@ -8,7 +8,9 @@
     'data': [
         'security/library_security.xml',
         'security/ir.access.csv',
+        'wizard/library_return_wizard_views.xml',
         'views/library_views.xml',
+        'report/member_loan_history_report.xml',
     ],
     'demo': [
         'demo/library_demo.xml',

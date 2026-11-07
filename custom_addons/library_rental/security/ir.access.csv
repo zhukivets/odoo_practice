@@ -6,3 +6,4 @@ access_library_loan_librarian,library.loan.librarian,library.loan,library_rental
 access_library_book_reader,library.book.reader,library.book,library_rental.group_library_reader,r,
 access_library_copy_reader,library.copy.reader,library.copy,library_rental.group_library_reader,r,
 access_library_loan_reader,library.loan.reader,library.loan,library_rental.group_library_reader,r,"[('member_id.user_id', '=', user.id)]"
+access_library_return_wizard_librarian,library.return.wizard.librarian,library.return.wizard,library_rental.group_library_librarian,crud,
