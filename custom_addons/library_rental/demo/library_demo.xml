@@ -77,4 +77,164 @@
         <field name="return_date">2026-09-14</field>
         <field name="state">returned</field>
     </record>
+
+    <!-- ===== Розширені демо-дані (практична 6) ===== -->
+
+    <!-- Books: разом 7 книг 7 різних авторів -->
+    <record id="book_4" model="library.book">
+        <field name="name">Harry Potter and the Philosopher's Stone</field>
+        <field name="author">J. K. Rowling</field>
+        <field name="isbn">978-0747532699</field>
+        <field name="publish_year">1997</field>
+    </record>
+
+    <record id="book_5" model="library.book">
+        <field name="name">The Hobbit</field>
+        <field name="author">J. R. R. Tolkien</field>
+        <field name="isbn">978-0547928227</field>
+        <field name="publish_year">1937</field>
+    </record>
+
+    <record id="book_6" model="library.book">
+        <field name="name">Тигролови</field>
+        <field name="author">Іван Багряний</field>
+        <field name="isbn">978-9660365468</field>
+        <field name="publish_year">1944</field>
+    </record>
+
+    <record id="book_7" model="library.book">
+        <field name="name">The Little Prince</field>
+        <field name="author">Antoine de Saint-Exupéry</field>
+        <field name="isbn">978-0156012195</field>
+        <field name="publish_year">1943</field>
+    </record>
+
+    <!-- Copies: популярні назви мають кілька примірників -->
+    <record id="copy_2_2" model="library.copy">
+        <field name="book_id" ref="book_2"/>
+        <field name="inventory_number">INV-0005</field>
+        <field name="condition">good</field>
+    </record>
+
+    <record id="copy_4_1" model="library.copy">
+        <field name="book_id" ref="book_4"/>
+        <field name="inventory_number">INV-0006</field>
+        <field name="condition">new</field>
+    </record>
+
+    <record id="copy_4_2" model="library.copy">
+        <field name="book_id" ref="book_4"/>
+        <field name="inventory_number">INV-0007</field>
+        <field name="condition">good</field>
+    </record>
+
+    <record id="copy_4_3" model="library.copy">
+        <field name="book_id" ref="book_4"/>
+        <field name="inventory_number">INV-0008</field>
+        <field name="condition">good</field>
+    </record>
+
+    <record id="copy_5_1" model="library.copy">
+        <field name="book_id" ref="book_5"/>
+        <field name="inventory_number">INV-0009</field>
+        <field name="condition">good</field>
+    </record>
+
+    <record id="copy_5_2" model="library.copy">
+        <field name="book_id" ref="book_5"/>
+        <field name="inventory_number">INV-0010</field>
+        <field name="condition">new</field>
+    </record>
+
+    <record id="copy_6_1" model="library.copy">
+        <field name="book_id" ref="book_6"/>
+        <field name="inventory_number">INV-0011</field>
+        <field name="condition">good</field>
+    </record>
+
+    <record id="copy_7_1" model="library.copy">
+        <field name="book_id" ref="book_7"/>
+        <field name="inventory_number">INV-0012</field>
+        <field name="condition">good</field>
+    </record>
+
+    <record id="copy_3_2" model="library.copy">
+        <field name="book_id" ref="book_3"/>
+        <field name="inventory_number">INV-0013</field>
+        <field name="condition">good</field>
+    </record>
+
+    <!-- Members: разом 4 читачі -->
+    <record id="member_3" model="library.member">
+        <field name="name">Олена Коваль</field>
+        <field name="email">olena.koval@example.com</field>
+        <field name="membership_number">LIB-M-003</field>
+    </record>
+
+    <record id="member_4" model="library.member">
+        <field name="name">Андрій Мельник</field>
+        <field name="email">andrii.melnyk@example.com</field>
+        <field name="membership_number">LIB-M-004</field>
+    </record>
+
+    <!-- Loans: мікс активних / прострочених / повернених.
+         Дати відносні до сьогодні, тому статус прострочення завжди актуальний. -->
+
+    <!-- Активна, в межах терміну -->
+    <record id="loan_3" model="library.loan">
+        <field name="copy_id" ref="copy_4_1"/>
+        <field name="member_id" ref="member_3"/>
+        <field name="loan_date" eval="(DateTime.today() - relativedelta(days=5)).strftime('%Y-%m-%d')"/>
+        <field name="state">active</field>
+    </record>
+
+    <!-- Активна, в межах терміну -->
+    <record id="loan_4" model="library.loan">
+        <field name="copy_id" ref="copy_7_1"/>
+        <field name="member_id" ref="member_4"/>
+        <field name="loan_date" eval="(DateTime.today() - relativedelta(days=3)).strftime('%Y-%m-%d')"/>
+        <field name="state">active</field>
+    </record>
+
+    <!-- Прострочена: 16 днів -->
+    <record id="loan_5" model="library.loan">
+        <field name="copy_id" ref="copy_5_1"/>
+        <field name="member_id" ref="member_4"/>
+        <field name="loan_date" eval="(DateTime.today() - relativedelta(days=30)).strftime('%Y-%m-%d')"/>
+        <field name="state">active</field>
+    </record>
+
+    <!-- Прострочена: 6 днів -->
+    <record id="loan_6" model="library.loan">
+        <field name="copy_id" ref="copy_2_2"/>
+        <field name="member_id" ref="member_1"/>
+        <field name="loan_date" eval="(DateTime.today() - relativedelta(days=20)).strftime('%Y-%m-%d')"/>
+        <field name="state">active</field>
+    </record>
+
+    <!-- Прострочена: 11 днів -->
+    <record id="loan_7" model="library.loan">
+        <field name="copy_id" ref="copy_3_2"/>
+        <field name="member_id" ref="member_2"/>
+        <field name="loan_date" eval="(DateTime.today() - relativedelta(days=25)).strftime('%Y-%m-%d')"/>
+        <field name="state">active</field>
+    </record>
+
+    <!-- Повернена вчасно -->
+    <record id="loan_8" model="library.loan">
+        <field name="copy_id" ref="copy_4_2"/>
+        <field name="member_id" ref="member_2"/>
+        <field name="loan_date" eval="(DateTime.today() - relativedelta(days=60)).strftime('%Y-%m-%d')"/>
+        <field name="return_date" eval="(DateTime.today() - relativedelta(days=50)).strftime('%Y-%m-%d')"/>
+        <field name="state">returned</field>
+    </record>
+
+    <!-- Повернена із запізненням на 6 днів (штраф 30 грн) -->
+    <record id="loan_9" model="library.loan">
+        <field name="copy_id" ref="copy_6_1"/>
+        <field name="member_id" ref="member_3"/>
+        <field name="loan_date" eval="(DateTime.today() - relativedelta(days=45)).strftime('%Y-%m-%d')"/>
+        <field name="return_date" eval="(DateTime.today() - relativedelta(days=25)).strftime('%Y-%m-%d')"/>
+        <field name="state">returned</field>
+    </record>
 </odoo>

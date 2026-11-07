@@ -1,6 +1,9 @@
+import logging
 from datetime import timedelta
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
 
 LOAN_DAYS = 14
 FINE_PER_DAY = 5.0
@@ -32,6 +35,9 @@ class LibraryLoan(models.Model):
     ], string='Status', default='active', required=True)
     fine_amount = fields.Float(string='Fine', compute='_compute_fine_amount', store=True)
     is_overdue = fields.Boolean(string='Overdue', compute='_compute_is_overdue')
+    # Заповнюються щоденним cron-завданням
+    overdue_days = fields.Integer(string='Overdue Days', readonly=True)
+    last_overdue_check = fields.Date(string='Last Overdue Check', readonly=True)
 
     # ---------- Computed fields ----------
     @api.depends('loan_date')
@@ -106,3 +112,45 @@ class LibraryLoan(models.Model):
                    'state': 'returned',
                    'return_date': rec.return_date or fields.Date.context_today(rec),
                })
+
+    # ---------- Cron ----------
+    @api.model
+    def _cron_check_overdue_loans(self):
+        """Щоденна перевірка прострочених видач (викликається з ir.cron).
+
+        Лише ORM (search/write), без сирого SQL. Кожен запис обробляється
+        в окремому try/except із savepoint: помилка на одному записі
+        відкочує лише його зміни і не зупиняє обробку решти пакета.
+        """
+        today = fields.Date.context_today(self)
+        loans = self.search([
+            ('state', '=', 'active'),
+            ('due_date', '<', today),
+        ])
+        _logger.info('Library cron: found %s overdue loan(s)', len(loans))
+
+        processed = failed = 0
+        for loan in loans:
+            try:
+                with self.env.cr.savepoint():
+                    loan._process_overdue_loan(today)
+                processed += 1
+            except Exception:
+                failed += 1
+                _logger.exception('Library cron: failed to process loan id=%s', loan.id)
+
+        _logger.info('Library cron: done, processed=%s, failed=%s', processed, failed)
+        return True
+
+    def _process_overdue_loan(self, today):
+        self.ensure_one()
+        days = (today - self.due_date).days
+        self.write({
+            'overdue_days': days,
+            'last_overdue_check': today,
+        })
+        _logger.info(
+            'Library cron: loan id=%s, copy %s, member %s: overdue %s day(s), expected fine %.2f',
+            self.id, self.copy_id.inventory_number, self.member_id.name,
+            days, days * FINE_PER_DAY,
+        )

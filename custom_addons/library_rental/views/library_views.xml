@@ -98,6 +98,8 @@
                 <field name="due_date"/>
                 <field name="return_date"/>
                 <field name="state"/>
+                <field name="overdue_days" optional="show"/>
+                <field name="fine_amount" optional="show"/>
             </list>
         </field>
     </record>
@@ -125,6 +127,8 @@
                              <field name="due_date"/>
                              <field name="return_date"/>
                              <field name="is_overdue"/>
+                             <field name="overdue_days" invisible="overdue_days == 0"/>
+                             <field name="last_overdue_check" invisible="not last_overdue_check"/>
                              <field name="fine_amount" invisible="fine_amount == 0"/>
                              </group>
                     </group>

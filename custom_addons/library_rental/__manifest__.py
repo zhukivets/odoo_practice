@@ -11,6 +11,7 @@
         'wizard/library_return_wizard_views.xml',
         'views/library_views.xml',
         'report/member_loan_history_report.xml',
+        'data/library_cron.xml',
     ],
     'demo': [
         'demo/library_demo.xml',
